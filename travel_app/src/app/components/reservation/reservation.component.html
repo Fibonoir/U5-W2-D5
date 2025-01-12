@@ -1,0 +1,159 @@
+<!-- src/app/components/reservation/reservation.component.html -->
+
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">Reservation Management</h1>
+
+  <!-- List of Reservations -->
+  <div class="mb-6">
+    <h2 class="text-xl font-semibold mb-2">All Reservations</h2>
+    <table class="min-w-full bg-white border">
+      <thead>
+        <tr>
+          <th class="py-2 px-4 border-b">ID</th>
+          <th class="py-2 px-4 border-b">Employee</th>
+          <th class="py-2 px-4 border-b">Travel Destination</th>
+          <th class="py-2 px-4 border-b">Request Date</th>
+          <th class="py-2 px-4 border-b">Notes</th>
+          <th class="py-2 px-4 border-b">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let res of reservations" class="hover:bg-gray-100">
+          <td class="py-2 px-4 border-b">{{ res.id }}</td>
+          <td class="py-2 px-4 border-b">
+            {{ res.employee?.name }} {{ res.employee?.lastName }}
+          </td>
+          <td class="py-2 px-4 border-b">{{ res.travel?.destination }}</td>
+          <td class="py-2 px-4 border-b">{{ res.requestDate | date }}</td>
+          <td class="py-2 px-4 border-b">{{ res.description }}</td>
+          <td class="py-2 px-4 border-b">
+            <button
+              class="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+              (click)="selectReservation(res)"
+            >
+              Edit
+            </button>
+            <button
+              class="bg-red-500 text-white px-2 py-1 rounded"
+              (click)="deleteReservation(res.id!)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Create New Reservation -->
+  <div class="mb-6">
+    <h2 class="text-xl font-semibold mb-2">Add New Reservation</h2>
+    <form class="space-y-4" (ngSubmit)="createReservation()">
+      <div class="flex space-x-4">
+        <div class="w-full">
+          <label class="block mb-1">Employee</label>
+          <select
+            class="border p-2 rounded w-full"
+            [(ngModel)]="newReservation.employee"
+            name="employee"
+            required
+          >
+            <option [ngValue]="null" disabled selected>Select Employee</option>
+            <option *ngFor="let emp of employees" [ngValue]="emp">
+              {{ emp.name }} {{ emp.lastName }}
+            </option>
+          </select>
+        </div>
+        <div class="w-full">
+          <label class="block mb-1">Travel</label>
+          <select
+            class="border p-2 rounded w-full"
+            [(ngModel)]="newReservation.travel"
+            name="travel"
+            required
+          >
+            <option [ngValue]="null" disabled selected>Select Travel</option>
+            <option *ngFor="let tr of travels" [ngValue]="tr">
+              {{ tr.destination }} on {{ tr.date | date }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="flex space-x-4">
+        <div class="w-full">
+          <label class="block mb-1">Request Date</label>
+          <input
+            class="border p-2 rounded w-full"
+            type="date"
+            [(ngModel)]="newReservation.requestDate"
+            name="requestDate"
+            required
+          />
+        </div>
+      </div>
+      <div>
+        <label class="block mb-1">Notes</label>
+        <textarea
+          class="border p-2 rounded w-full"
+          [(ngModel)]="newReservation.description"
+          name="notes"
+          rows="3"
+          placeholder="Flight or accommodation preferences"
+        ></textarea>
+      </div>
+      <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">
+        Create Reservation
+      </button>
+    </form>
+  </div>
+
+  <!-- Edit Reservation -->
+  <div *ngIf="selectedReservation" class="mb-6">
+    <h2 class="text-xl font-semibold mb-2">Edit Reservation</h2>
+    <form class="space-y-4" (ngSubmit)="updateReservation()">
+      <div class="w-full">
+        {{ selectedReservation.employee?.name }}
+        {{ selectedReservation.employee?.lastName }}
+      </div>
+      <div class="w-full">
+        {{ selectedReservation.travel?.destination }}
+        {{ selectedReservation.travel?.date }}
+        {{ selectedReservation.travel?.status }}
+      </div>
+      <div class="flex space-x-4">
+        <div class="w-full">
+          <label class="block mb-1">Request Date</label>
+          <input
+            class="border p-2 rounded w-full"
+            type="date"
+            [(ngModel)]="selectedReservation.requestDate"
+            name="editRequestDate"
+            required
+          />
+        </div>
+      </div>
+      <div>
+        <label class="block mb-1">Notes</label>
+        <textarea
+          class="border p-2 rounded w-full"
+          [(ngModel)]="selectedReservation.description"
+          name="editNotes"
+          rows="3"
+          placeholder="Flight or accommodation preferences"
+        ></textarea>
+      </div>
+      <div class="flex space-x-4">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+          Update Reservation
+        </button>
+        <button
+          type="button"
+          class="bg-gray-500 text-white px-4 py-2 rounded"
+          (click)="cancelEdit()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
